@@ -12,7 +12,7 @@
     </div>
 
     <script>
-     var instagramUrl = "https://api.instagram.com/v1/media/popular?access_token=4561657.f59def8.48e8fe975c6940c4ab0cd902892f9b7d&callback=?"
+     var instagramUrl = "https://api.instagram.com/v1/media/popular?access_token=&callback=?"
 
      $.getJSON(instagramUrl, function( data ) {
        $.each( data.data, function(key, value) {
