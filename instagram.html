@@ -20,26 +20,35 @@
        var client_id = '2e000ed526de4ce28a447497cc86fe5b'
        var apiUrl = "https://api.instagram.com/v1/media/popular?client_id=" + client_id + "&callback=?"
 
+       function success (instagramData) {
+         // This is run if the ajax call is successful
+         // The "instagramData" being passed to this function is the returned data from the url
+
+         if (instagramData.meta.code != 200) {
+           // If we don't get a 200 that means instagram threw an error.
+           // Instead of adding the html for images to .results div, we will put the error in there so
+           // we know what happend
+           $('.results').html('<h1>An Error Occured</h1><p>' + instagramData.meta.error_message + '</p>');
+           return
+         }
+
+         $.each(instagramData.data, function(index, gram) {
+           // instagramData.data is the "data" inside the returned json. There is "meta" and "data".
+           // index is just an incremental number for each gram. we don't need it yet.
+           // gram is the information for EACH gram. this $.each loops over all of them.
+
+           if (gram.type == 'image') {
+             // for this example we only care about images
+             $('.results').append('<p>' + gram.user.username + '</p><img src="' + gram.images.low_resolution.url + '"/>')
+           }
+         });
+       }
+
        $.ajax({
          type: "GET",
          url: apiUrl,
          dataType: "json",
-         success: function (instagramData) {
-           // This is run if the ajax call is successful
-           // The "instagramData" being passed to this function is the returned data from the url
-
-           $.each(instagramData.data, function(index, gram) {
-             // instagramData.data is the "data" inside the returned json. There is "meta" and "data".
-             // we don't care about "meta" yet.
-             // index is just an incremental number for each gram. we don't need it yet.
-             // gram is the information for EACH gram. this $.each loops over all of them.
-
-             if (gram.type == 'image') {
-               // for this example we only care about images
-               $('.results').append('<p>' + gram.user.username + '</p><img src="' + gram.images.low_resolution.url + '"/>')
-             }
-           });
-         }
+         success: success // If successful we call the success function, which lives up above
        });
      });
     </script>
